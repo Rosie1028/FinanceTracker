@@ -8,17 +8,21 @@ from database import get_db, engine
 from models import expense as models_expense
 from models import investment_and_saving as models_ias
 from models import income as models_income
+from models import car_loan as models_car_loan
 from schemas import expense as schemas_expense
 from schemas import investment_and_saving as schemas_ias
 from schemas import income as schemas_income
+from schemas import car_loan as schemas_car_loan
 from crud import expense as crud_expense
 from crud import investment_and_saving as crud_ias
 from crud import income as crud_income
+from crud import car_loan as crud_car_loan
 
 # Create database tables
 models_expense.Base.metadata.create_all(bind=engine)
 models_ias.Base.metadata.create_all(bind=engine)
 models_income.Base.metadata.create_all(bind=engine)
+models_car_loan.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="Finance Tracker API",
@@ -217,6 +221,60 @@ def delete_income(income_id: int, db: Session = Depends(get_db)):
     if not success:
         raise HTTPException(status_code=404, detail="Income not found")
     return {"message": "Income deleted successfully"}
+
+# Car Loan endpoints
+@app.post("/car-loans/", response_model=schemas_car_loan.CarLoan)
+def create_car_loan(car_loan: schemas_car_loan.CarLoanCreate, db: Session = Depends(get_db)):
+    return crud_car_loan.create_car_loan(db=db, car_loan=car_loan)
+
+@app.get("/car-loans/", response_model=List[schemas_car_loan.CarLoan])
+def read_car_loans(
+    skip: int = 0,
+    limit: int = 100,
+    start_date: Optional[datetime] = None,
+    end_date: Optional[datetime] = None,
+    db: Session = Depends(get_db)
+):
+    return crud_car_loan.get_car_loans(db, skip=skip, limit=limit, start_date=start_date, end_date=end_date)
+
+@app.get("/car-loans/{car_loan_id}", response_model=schemas_car_loan.CarLoan)
+def read_car_loan(car_loan_id: int, db: Session = Depends(get_db)):
+    db_car_loan = crud_car_loan.get_car_loan(db, car_loan_id=car_loan_id)
+    if db_car_loan is None:
+        raise HTTPException(status_code=404, detail="Car loan entry not found")
+    return db_car_loan
+
+@app.put("/car-loans/{car_loan_id}", response_model=schemas_car_loan.CarLoan)
+def update_car_loan(
+    car_loan_id: int,
+    car_loan: schemas_car_loan.CarLoanCreate,
+    db: Session = Depends(get_db)
+):
+    db_car_loan = crud_car_loan.update_car_loan(db, car_loan_id=car_loan_id, car_loan=car_loan)
+    if db_car_loan is None:
+        raise HTTPException(status_code=404, detail="Car loan entry not found")
+    return db_car_loan
+
+@app.delete("/car-loans/{car_loan_id}")
+def delete_car_loan(car_loan_id: int, db: Session = Depends(get_db)):
+    success = crud_car_loan.delete_car_loan(db, car_loan_id=car_loan_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Car loan entry not found")
+    return {"message": "Car loan entry deleted successfully"}
+
+@app.get("/car-loans/stats/summary")
+def get_car_loan_summary(db: Session = Depends(get_db)):
+    latest_loan = crud_car_loan.get_latest_car_loan(db)
+    total_interest = crud_car_loan.get_total_interest_paid(db)
+    total_principal = crud_car_loan.get_total_principal_paid(db)
+    total_payments = crud_car_loan.get_total_payments(db)
+    
+    return {
+        "latest_balance": latest_loan.ending_balance if latest_loan else 0,
+        "total_interest_paid": total_interest,
+        "total_principal_paid": total_principal,
+        "total_payments": total_payments
+    }
 
 if __name__ == "__main__":
     import uvicorn
