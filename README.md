@@ -30,6 +30,7 @@ finance-tracker/
 ├── frontend/           # Flutter application
 ├── backend/            # Python FastAPI application
 └── docs/               # Documentation
+
 Setup Instructions
 Setup documentation will be added as development progresses. The project is currently in active development.
 
