@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
-import 'screens/car_loan_screen.dart';
-import 'screens/transactions_screen.dart';
+import 'screens/budget_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,46 +17,83 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         colorScheme: ColorScheme(
           brightness: Brightness.light,
-          primary: const Color(0xFF00916E), // Teal green as main color
-          onPrimary: Colors.white, // White text on green
-          secondary: const Color(0xFFFFCF00), // Yellow as secondary
-          onSecondary: const Color(0xFF190B28), // Dark text on yellow
-          tertiary: const Color(0xFF7D83FF), // Blue as tertiary
-          onTertiary: Colors.white,
+          primary: const Color(0xFFFFD700), // Gold as main color
+          onPrimary: Colors.black, // Black text on gold
+          secondary: const Color(0xFFFFC107), // Amber gold as secondary
+          onSecondary: Colors.black, // Black text on gold
+          tertiary: const Color(0xFFFFA000), // Darker gold as tertiary
+          onTertiary: Colors.black,
           error: Colors.red,
           onError: Colors.white,
+          surface: Colors.white, // White surface
+          onSurface: Colors.black, // Black text on light surface
+          primaryContainer: const Color(0xFFFFD700).withOpacity(0.1),
+          onPrimaryContainer: Colors.black,
+          secondaryContainer: const Color(0xFFFFC107).withOpacity(0.1),
+          onSecondaryContainer: Colors.black,
           background: Colors.white,
-          onBackground: const Color(0xFF190B28), // Main text color
-          surface: Colors.white,
-          onSurface: const Color(0xFF190B28), // Surface text color
-          primaryContainer: const Color(0xFF00916E).withOpacity(0.1),
-          onPrimaryContainer: const Color(0xFF00916E),
-          secondaryContainer: const Color(0xFFFFCF00).withOpacity(0.1),
-          onSecondaryContainer: const Color(0xFFFFCF00),
+          onBackground: Colors.black,
         ),
+        scaffoldBackgroundColor: Colors.white,
         appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF00916E),
-          foregroundColor: Colors.white,
+          backgroundColor: Color(0xFFFFD700), // Gold background
+          foregroundColor: Colors.black, // Black text
           elevation: 0,
         ),
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          backgroundColor: Color(0xFF00916E),
-          foregroundColor: Colors.white,
+          backgroundColor: Color(0xFFFFD700), // Gold
+          foregroundColor: Colors.black, // Black icon
         ),
         navigationBarTheme: NavigationBarThemeData(
           backgroundColor: Colors.white,
-          indicatorColor: const Color(0xFF00916E).withOpacity(0.1),
-          labelTextStyle: MaterialStateProperty.all(
-            const TextStyle(
-              color: Color(0xFF00916E),
+          indicatorColor: const Color(0xFFFFD700).withOpacity(0.2),
+          labelTextStyle: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
+              return const TextStyle(
+                color: Color(0xFFFFD700),
+                fontWeight: FontWeight.w600,
+              );
+            }
+            return const TextStyle(
+              color: Colors.black87,
               fontWeight: FontWeight.w500,
-            ),
+            );
+          }),
+          iconTheme: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
+              return const IconThemeData(
+                color: Color(0xFFFFD700),
+              );
+            }
+            return const IconThemeData(
+              color: Colors.black87,
+            );
+          }),
+        ),
+        cardTheme: CardTheme(
+          color: Colors.white,
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+            side: const BorderSide(color: Color(0xFFFFD700), width: 1),
           ),
-          iconTheme: MaterialStateProperty.all(
-            const IconThemeData(
-              color: Color(0xFF00916E),
-            ),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderSide: const BorderSide(color: Color(0xFFFFD700)),
+            borderRadius: BorderRadius.circular(8),
           ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: Color(0xFFFFD700)),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: Color(0xFFFFD700), width: 2),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          labelStyle: const TextStyle(color: Colors.black),
         ),
       ),
       home: const MainScreen(),
@@ -77,8 +113,7 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _screens = [
     const HomeScreen(),
-    const CarLoanScreen(),
-    const TransactionsScreen(),
+    const BudgetScreen(),
   ];
 
   @override
@@ -95,15 +130,11 @@ class _MainScreenState extends State<MainScreen> {
         destinations: const [
           NavigationDestination(
             icon: Icon(Icons.home),
-            label: 'Home',
+            label: 'Dashboard',
           ),
           NavigationDestination(
-            icon: Icon(Icons.account_balance),
-            label: 'Loans',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.receipt_long),
-            label: 'Transactions',
+            icon: Icon(Icons.account_balance_wallet),
+            label: 'Budget',
           ),
         ],
       ),

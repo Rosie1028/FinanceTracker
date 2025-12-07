@@ -74,7 +74,7 @@ class _LoanTrackingScreenState extends State<LoanTrackingScreen> {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: colorScheme.onBackground,
+                color: colorScheme.onSurface,
               ),
             ),
             const SizedBox(height: 16),

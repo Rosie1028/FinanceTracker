@@ -27,29 +27,32 @@ class ExpenseService {
 
   // Add a new expense
   Future<Expense> createExpense(ExpenseCreate expense) async {
+    print('Creating expense: ${expense.toJson()}');
     final response = await http.post(
       Uri.parse('$baseUrl/expenses/'),
       headers: <String, String>{'Content-Type': 'application/json'},
       body: jsonEncode(expense.toJson()),
     );
+    print('Create expense response status: ${response.statusCode}');
+    print('Create expense response body: ${response.body}');
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       return Expense.fromJson(json.decode(response.body));
     } else {
-      throw Exception('Failed to create expense');
+      throw Exception(
+          'Failed to create expense: ${response.statusCode} - ${response.body}');
     }
   }
 
-  // Fetch expenses (add parameters for filtering/date range later)
+  // Fetch expenses (with limit to get all records)
   Future<List<Expense>> fetchExpenses() async {
     print('Making request to: $baseUrl/expenses/');
-    final response = await http.get(Uri.parse('$baseUrl/expenses/'));
+    final response = await http.get(Uri.parse('$baseUrl/expenses/?limit=1000'));
     print('Expenses response status: ${response.statusCode}');
-    print('Expenses response body: ${response.body}');
+    print('Expenses fetched: ${json.decode(response.body).length}');
 
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
-      print('Parsed expenses: $jsonResponse');
       return jsonResponse.map((expense) => Expense.fromJson(expense)).toList();
     } else {
       throw Exception(
@@ -63,6 +66,34 @@ class ExpenseService {
 
     if (response.statusCode != 200 && response.statusCode != 204) {
       throw Exception('Failed to delete expense: ${response.statusCode}');
+    }
+  }
+
+  // Create a new category
+  Future<Category> createCategory(String name, {String? description}) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/categories/'),
+      headers: <String, String>{'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'name': name,
+        if (description != null) 'description': description,
+      }),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return Category.fromJson(json.decode(response.body));
+    } else {
+      throw Exception(
+          'Failed to create category: ${response.statusCode} - ${response.body}');
+    }
+  }
+
+  // Delete a category
+  Future<void> deleteCategory(int id) async {
+    final response = await http.delete(Uri.parse('$baseUrl/categories/$id'));
+
+    if (response.statusCode != 200 && response.statusCode != 204) {
+      throw Exception('Failed to delete category: ${response.statusCode}');
     }
   }
 }

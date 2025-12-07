@@ -32,9 +32,31 @@ class _AddEntryFormState extends State<AddEntryForm> {
   final _descriptionController = TextEditingController();
   final _sourceController = TextEditingController();
   Category? _selectedCategory;
-  String _selectedMonth = 'January';
+  String _selectedMonth = '';
   int _selectedYear = DateTime.now().year;
   EntryType _selectedType = EntryType.expense;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize with current month
+    final now = DateTime.now();
+    final monthNames = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
+    ];
+    _selectedMonth = monthNames[now.month - 1];
+  }
 
   final ExpenseService _expenseService = ExpenseService();
   final InvestmentAndSavingService _iasService = InvestmentAndSavingService();

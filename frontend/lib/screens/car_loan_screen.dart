@@ -3,7 +3,7 @@ import 'package:fl_chart/fl_chart.dart';
 import '../services/car_loan_service.dart';
 import '../models/car_loan_models.dart';
 import '../widgets/add_car_loan_form.dart';
-import 'package:intl/intl.dart';
+import 'settings_screen.dart';
 
 class CarLoanScreen extends StatefulWidget {
   const CarLoanScreen({super.key});
@@ -83,6 +83,16 @@ class _CarLoanScreenState extends State<CarLoanScreen> {
             icon: const Icon(Icons.refresh),
             onPressed: _fetchData,
             tooltip: 'Refresh Data',
+          ),
+          IconButton(
+            icon: const Icon(Icons.account_circle),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SettingsScreen()),
+              );
+            },
+            tooltip: 'Settings',
           ),
         ],
       ),
@@ -235,7 +245,7 @@ class _CarLoanScreenState extends State<CarLoanScreen> {
               height: 250,
               child: LineChart(
                 LineChartData(
-                  gridData: FlGridData(show: true),
+                  gridData: const FlGridData(show: true),
                   titlesData: FlTitlesData(
                     leftTitles: AxisTitles(
                       sideTitles: SideTitles(
@@ -266,9 +276,9 @@ class _CarLoanScreenState extends State<CarLoanScreen> {
                       ),
                     ),
                     topTitles:
-                        AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                        const AxisTitles(sideTitles: SideTitles(showTitles: false)),
                     rightTitles:
-                        AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                        const AxisTitles(sideTitles: SideTitles(showTitles: false)),
                   ),
                   borderData: FlBorderData(show: true),
                   lineBarsData: [
@@ -277,7 +287,7 @@ class _CarLoanScreenState extends State<CarLoanScreen> {
                       isCurved: true,
                       color: Colors.blue,
                       barWidth: 3,
-                      dotData: FlDotData(show: true),
+                      dotData: const FlDotData(show: true),
                     ),
                   ],
                 ),

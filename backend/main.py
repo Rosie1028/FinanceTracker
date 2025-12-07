@@ -102,6 +102,13 @@ def read_categories(skip: int = 0, limit: int = 100, db: Session = Depends(get_d
     categories = crud_expense.get_categories(db, skip=skip, limit=limit)
     return categories
 
+@app.delete("/categories/{category_id}")
+def delete_category(category_id: int, db: Session = Depends(get_db)):
+    success = crud_expense.delete_category(db, category_id=category_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Category not found")
+    return {"message": "Category deleted successfully"}
+
 # Saving endpoints
 @app.post("/savings/", response_model=schemas_ias.Saving)
 def create_saving(saving: schemas_ias.SavingCreate, db: Session = Depends(get_db)):

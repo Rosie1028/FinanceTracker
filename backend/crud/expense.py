@@ -86,4 +86,13 @@ def create_category(db: Session, category: CategoryCreate) -> Category:
     db.add(db_category)
     db.commit()
     db.refresh(db_category)
-    return db_category 
+    return db_category
+
+def delete_category(db: Session, category_id: int) -> bool:
+    db_category = get_category(db, category_id)
+    if not db_category:
+        return False
+    
+    db.delete(db_category)
+    db.commit()
+    return True 
